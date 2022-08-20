@@ -38,7 +38,6 @@ def init_params(layer_dims):
     #
     return params
 
-# :::::::::::::::
 
 
 # :::::::::::::::
