@@ -65,11 +65,16 @@ def setData(data, y_index, perc = 1, seed = 1308):
         limit = int((1-perc)*data.shape[0]) 
         train_index = index[0:limit]
         test_index = index[limit:]
-        print(len(train_index))
-        print(len(test_index))
+        # define the regression matrix and the array for response variable
         x = np.delete(data, y_index, axis=1)
         y = data[:,y_index]
-        return [x,y]
+        # train
+        x_train = x[train_index,:]
+        y_train = y[train_index]
+        # test 
+        x_test = x[test_index,:]
+        y_test = y[test_index]
+        return [x_train,y_train,x_test,y_test]
 
 
 # :::::::::::::::
