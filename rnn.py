@@ -132,7 +132,10 @@ class rnn():
                     dL_dth = dL_do * do_daok * daok_dzhk * dzhk_dth
                     self.params['W1'][h,k] = self.params['W1'][h,k] - lr * dL_dth
 
-    
+
+    # :::::::::::::
+    # Train
+    # :::::::::::::
     def train(self, X, y, lr, epochs):
         losses = []
         # Loop training
@@ -143,11 +146,31 @@ class rnn():
             losses.append(loss)
             print("Epoch {:4d}: training loss = {:.6f}".format(e, losses[e]))
 
-            
-# :::::::::::::::            
-            
 
-            
+    # :::::::::::::
+    # Convert pandas to numpy
+    # :::::::::::::
+    def convertFormat(X,y):
+        # convert regressor matrix 
+        if X.__class__.__name__ == 'DataFrame':
+            X = np.array(X)
+        else:
+            pass
+        # convert response variable 
+        if y.__class__.__name__ == 'DataFrame':
+            y = np.array(y)
+        else:
+            pass
+
+        # return new matrix converted in numpy array 
+        return X,y
+
+    
+
+
+
+                      
+                 
 # :::::::::  
 # Test
 # :::::::::        
