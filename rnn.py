@@ -1,5 +1,6 @@
 # library 
 import numpy as np
+import random 
 
 # :::::::::::::::
 # Activation functions:
@@ -25,6 +26,7 @@ def total_loss(target, pred):
     return np.sum(np.square(target - pred)) / pred.shape[0]
 
 
+
 # :::::::::::::::
 # Init network weights
 # :::::::::::::::
@@ -38,6 +40,36 @@ def init_params(layer_dims):
     #
     return params
 
+
+# :::::::::::::
+# Convert pandas to numpy
+# :::::::::::::
+def setData(data, y_index, perc = 1, seed = 1308):
+    # converto in numpy array
+    if data.__class__.__name__ == 'DataFrame':
+        data = np.array(data)
+    else:
+        pass
+    # Sep X (regression matrix) and y (response variables) 
+    x = np.delete(data, y_index, axis=1)
+    y = data[:,y_index]
+    if perc == 1:
+        return [x,y]
+    # split x and y in train and test 
+    else:
+        random.seed(seed)
+        index = list(range(0,data.shape[0]))
+        random.shuffle(index)
+        #print(index)
+        # subset index list for split data in train and test set
+        limit = int((1-perc)*data.shape[0]) 
+        train_index = index[0:limit]
+        test_index = index[limit:]
+        print(len(train_index))
+        print(len(test_index))
+        x = np.delete(data, y_index, axis=1)
+        y = data[:,y_index]
+        return [x,y]
 
 
 # :::::::::::::::
@@ -145,29 +177,7 @@ class rnn():
             loss = total_loss(y, fwp)
             losses.append(loss)
             print("Epoch {:4d}: training loss = {:.6f}".format(e, losses[e]))
-
-
-    # :::::::::::::
-    # Convert pandas to numpy
-    # :::::::::::::
-    def convertFormat(X,y):
-        # convert regressor matrix 
-        if X.__class__.__name__ == 'DataFrame':
-            X = np.array(X)
-        else:
-            pass
-        # convert response variable 
-        if y.__class__.__name__ == 'DataFrame':
-            y = np.array(y)
-        else:
-            pass
-
-        # return new matrix converted in numpy array 
-        return X,y
-
-    
-
-
+ 
 
                       
                  
