@@ -41,40 +41,90 @@ def init_params(layer_dims):
     return params
 
 
+
+
+# :::::::::::::
+# min-max features scaling 
+# :::::::::::::
+def scaling(x):
+    x = x.astype(np.float64)
+    for i in range(0,len(x[0])):
+        mn = np.min(x[:,i])
+        mx = np.max(x[:,i])
+        scaled = np.array(list(map(lambda x: (x-mn)/(mx-mn), x[:,i])))
+        x[:,i] = scaled
+        
+    return x
+
+
 # :::::::::::::
 # Convert pandas to numpy
 # :::::::::::::
-def setData(data, y_index, perc = 1, seed = 1308):
+# da inserire scaling 
+def setData(data, y_index, perc = 1, shuffle = False, scaler = False):
+    
     # converto in numpy array
-    if data.__class__.__name__ == 'DataFrame':
+    if data.__class__.__name__ == 'DataFrame' or data.__class__.__name__ == 'list':
         data = np.array(data)
-    else:
+    elif data.__class__.__name__ == 'ndarray':
         pass
+    else:
+        raise TypeError('invalid class type for data')
+        
     # Sep X (regression matrix) and y (response variables) 
     x = np.delete(data, y_index, axis=1)
     y = data[:,y_index]
+
+    # control flow for train-test splitting process 
     if perc == 1:
-        return [x,y]
+        if scaler == False:
+            return [x,y]
+        else: 
+            x = scaling(x)
+            return [x,y]
+
     # split x and y in train and test 
     else:
-        random.seed(seed)
-        index = list(range(0,data.shape[0]))
-        random.shuffle(index)
-        #print(index)
-        # subset index list for split data in train and test set
-        limit = int((1-perc)*data.shape[0]) 
-        train_index = index[0:limit]
-        test_index = index[limit:]
-        # define the regression matrix and the array for response variable
-        x = np.delete(data, y_index, axis=1)
-        y = data[:,y_index]
-        # train
-        x_train = x[train_index,:]
-        y_train = y[train_index]
-        # test 
-        x_test = x[test_index,:]
-        y_test = y[test_index]
-        return [x_train,y_train,x_test,y_test]
+        
+        # scaling before shuffle
+        if scaler == False:
+            pass
+        else: 
+            x = scaling(x)
+
+        # shuffle phase 
+        if shuffle == False:
+            # set index 
+            index = list(range(0,data.shape[0]))
+            # define limit for splitting 
+            limit = int((1-perc)*data.shape[0]) 
+            train_index = index[0:limit]
+            test_index = index[limit:]
+            # train
+            x_train = x[train_index,:]
+            y_train = y[train_index]
+            # test 
+            x_test = x[test_index,:]
+            y_test = y[test_index]
+            # return matricies 
+            return [x_train,y_train,x_test,y_test]
+        else: 
+            # set index
+            index = list(range(0,data.shape[0]))
+            # shuffle the index list 
+            random.shuffle(index)
+            # define limit for splitting
+            limit = int((1-perc)*data.shape[0]) 
+            train_index = index[0:limit]
+            test_index = index[limit:]
+            # train
+            x_train = x[train_index,:]
+            y_train = y[train_index]
+            # test 
+            x_test = x[test_index,:]
+            y_test = y[test_index]
+            # return matricies 
+            return [x_train,y_train,x_test,y_test]
 
 
 # :::::::::::::::
