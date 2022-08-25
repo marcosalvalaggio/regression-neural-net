@@ -87,9 +87,7 @@ def setData(data, y_index, perc = 1, shuffle = False, scaler = False):
     else:
         
         # scaling before shuffle
-        if scaler == False:
-            pass
-        else: 
+        if scaler == True:
             x = scaling(x)
 
         # shuffle phase 
